@@ -18,22 +18,10 @@ namespace ParrotIncSquawk.Controllers
         private readonly ISquawkService _squawkService;
 
         public SquawkController(ILogger<SquawkController> logger,
-            SquawkService squawkService)
+            ISquawkService squawkService)
         {
             _logger = logger;
             _squawkService = squawkService;
-        }
-
-        /// <summary>
-        /// Returns a list of Squawks
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(List<Squawk>), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> GetAsync()
-        {
-            return Ok(await _squawkService.GetAll());
         }
 
         /// <summary>
@@ -47,6 +35,18 @@ namespace ParrotIncSquawk.Controllers
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid userId)
         {
             return Ok(await _squawkService.GetById(userId));
+        }
+
+        /// <summary>
+        /// Returns a list of Squawks
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(List<Squawk>), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetAsync()
+        {
+            return Ok(await _squawkService.GetAll());
         }
 
         /// <summary>
