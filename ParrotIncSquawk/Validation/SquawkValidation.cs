@@ -19,14 +19,14 @@ namespace ParrotIncSquawk.Validation
 
             RuleFor(p => p.Text)
                 .MaximumLength(400)
-                .WithMessage("{PropertyName} should have only 400 max characters.");
+                .WithMessage("'{PropertyName}' should have only 400 max characters.");
             RuleFor(p => p.Text)
                 .MinimumLength(1)
-                .WithMessage("{PropertyName} must be at least 1 character.");
+                .WithMessage("'{PropertyName}' must be at least 1 character.");
 
             RuleFor(p => p)
                 .Must(p => !IsDuplicate(p))
-                .WithMessage("{PropertyName} cannot be duplicated.");
+                .WithMessage("'{PropertyName}' cannot be duplicated.");
 
             RuleFor(p => p.Text)
                 .Must(pass => !blacklistedWords
