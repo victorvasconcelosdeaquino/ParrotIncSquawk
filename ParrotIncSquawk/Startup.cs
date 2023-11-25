@@ -26,7 +26,7 @@ namespace ParrotIncSquawk
             services.AddControllers();
 
             //Configuring the dependence injection
-            services.Add<ISquawkService, SquawkService>();
+            services.AddScoped<ISquawkService, SquawkService>();
 
             services.AddSwaggerGen(c =>
             {

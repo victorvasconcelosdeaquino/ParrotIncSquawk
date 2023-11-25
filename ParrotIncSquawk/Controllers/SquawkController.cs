@@ -41,7 +41,7 @@ namespace ParrotIncSquawk.Controllers
         /// </summary>
         /// <param name="userId"> The userId is always provided by the API customers</param>
         /// <returns></returns>
-        [HttpGet]
+        [HttpGet("{userId:guid}")]
         [ProducesResponseType(typeof(Squawk), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<IActionResult> GetByIdAsync([FromRoute] Guid userId)
