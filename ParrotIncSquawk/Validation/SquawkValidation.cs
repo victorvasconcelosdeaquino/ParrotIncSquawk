@@ -24,7 +24,7 @@ namespace ParrotIncSquawk.Validation
                 .MinimumLength(1)
                 .WithMessage("{PropertyName} must be at least 1 character.");
 
-            RuleFor(p => p.Text)
+            RuleFor(p => p)
                 .Must(p => !IsDuplicate(p))
                 .WithMessage("{PropertyName} cannot be duplicated.");
 
@@ -34,10 +34,11 @@ namespace ParrotIncSquawk.Validation
                 .WithMessage("'{PropertyName}' contains a word that is not allowed.");
         }
 
-        private bool IsDuplicate(string text)
+        private bool IsDuplicate(Squawk squawk)
         {
             return _squawkContext.Squawks
-                .Any(x => x.Text == text);
+                .Any(x => x.Text == squawk.Text &&
+                x.UserId == squawk.UserId);
         }
     }
 }
