@@ -6,7 +6,7 @@ public readonly record struct SquawkErr
 	{
 	}
 
-	public readonly string DuplicatedError = "the text cannot be duplicated";
+	public readonly string DuplicatedError = "The text cannot be duplicated";
 
 	public readonly string LessThenOrEqual400 = "'{PropertyName}' should have only 400 max characters.";
 

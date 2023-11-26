@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using ParrotIncSquawk.Constants.Errors;
-using ParrotIncSquawk.Entities;
 using ParrotIncSquawk.Models;
 using ParrotIncSquawk.Persistence;
 using System;
@@ -13,6 +12,9 @@ namespace ParrotIncSquawk.Validation
         private readonly SquawkContext _squawkContext;
         public static readonly string[] blacklistedWords = { "Tweet", "Twitter" };
 
+        /// <summary>
+        /// This method validates if the text contains lenght between 1 and 400 or words not allowed
+        /// </summary>
         public SquawkValidation()
         {
             RuleFor(p => p.Text)

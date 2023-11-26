@@ -32,7 +32,7 @@ namespace ParrotIncSquawk.Controllers
         /// </summary>
         /// <param name="userId"> The userId is always provided by the API customers</param>
         /// <returns></returns>
-        [HttpGet("{userId:guid}/[controller]")]
+        [HttpGet("{userId:guid}/[controller]/{squawkId:guid}")]
         [ProducesResponseType(typeof(SquawkRequest), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NotFound)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]
@@ -48,7 +48,7 @@ namespace ParrotIncSquawk.Controllers
         /// Returns a list of Squawks
         /// </summary>
         /// <returns></returns>
-        [HttpGet("{userId:guid}/[controller]/{squawkId:guid}")]
+        [HttpGet("{userId:guid}/[controller]")]
         [ProducesResponseType(typeof(IReadOnlyList<Squawk>), (int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.NoContent)]
         [ProducesResponseType((int)HttpStatusCode.Unauthorized)]

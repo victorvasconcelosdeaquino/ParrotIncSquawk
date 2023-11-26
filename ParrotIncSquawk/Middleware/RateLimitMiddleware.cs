@@ -19,8 +19,14 @@ public class RateLimitMiddleware
 		_cache = cache;
 	}
 
-	public async Task Invoke(HttpContext context)
+    /// <summary>
+    /// This method is called after post to validate the rate limits
+    /// </summary>
+    /// <param name="context"></param>
+    /// <returns></returns>
+    public async Task Invoke(HttpContext context)
 	{
+		//Gets the userId from the route when the post method is called
 		string? userId = context?.Request?.RouteValues[_userId]?.ToString();
 
 		if (string.IsNullOrEmpty(userId))
