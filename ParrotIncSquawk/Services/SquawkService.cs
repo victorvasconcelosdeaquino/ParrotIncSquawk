@@ -1,11 +1,17 @@
-﻿using FluentValidation.Results;
+﻿using Ardalis.Result;
+using Ardalis.Result.FluentValidation;
+using FluentValidation.Results;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using ParrotIncSquawk.Constants.Errors;
 using ParrotIncSquawk.Entities;
+using ParrotIncSquawk.Models;
 using ParrotIncSquawk.Persistence;
 using ParrotIncSquawk.Validation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ParrotIncSquawk.Services
@@ -19,36 +25,47 @@ namespace ParrotIncSquawk.Services
             _squawkContext = squawkContext;
         }
 
-        public async Task<IEnumerable<Squawk>> GetAll()
+        public async Task<IEnumerable<Squawk>> GetAll(CancellationToken cancellationToken)
         {
-            return await _squawkContext.Squawks.ToListAsync();
+            return await _squawkContext.Squawks.
+                AsNoTracking().
+                ToListAsync(cancellationToken);
         }
 
-        public async Task<Squawk> GetById(Guid userId)
+        public async Task<Squawk> GetById(Guid userId,
+            Guid squawkId,
+            CancellationToken cancellationToken)
         {
-            return await _squawkContext.Squawks.FindAsync(userId);
+            return await _squawkContext.Squawks.
+                AsNoTracking().
+                FirstOrDefaultAsync(u => u.UserId == userId && u.SquawkId == squawkId, cancellationToken);
         }
 
-        public async Task<Squawk> Create(Guid userId, Squawk squawk)
+        public async Task<Result<Squawk>> Create(Guid userId, SquawkRequest model, CancellationToken cancellationToken)
         {
-            var errors = new List<string>();
-            SquawkValidation validationRules = new SquawkValidation(_squawkContext);
-            ValidationResult validationResult = validationRules.Validate(squawk);
+            SquawkValidation validationRules = new();
+            ValidationResult validationResult = validationRules.Validate(model);
 
-            if (validationResult.IsValid == false)
+            if (!validationResult.IsValid)
+                return Result<Squawk>.Invalid(validationResult.AsErrors());
+
+            bool hasUserSameText = await _squawkContext.Squawks
+            .AsNoTracking()
+            .AnyAsync(x => x.Text == model.Text && x.UserId == userId, cancellationToken);
+
+            if (hasUserSameText)
+                return Result<Squawk>.Error(ErrorsConstants.SquawkError.DuplicatedError);
+
+            EntityEntry<Squawk> squawk = await _squawkContext.Squawks.AddAsync(new Squawk()
             {
-                foreach (ValidationFailure failure in validationResult.Errors)
-                {
-                    errors.Add(failure.ErrorMessage);
-                }
-            }
+                Text = model.Text,
+                UserId = userId,
+                SquawkDate = DateTime.UtcNow,
+            });
 
-            if (errors.Count > 0)
-                throw new System.Exception(String.Join(", ", errors));
-
-            _squawkContext.Add(squawk);
             await _squawkContext.SaveChangesAsync();
-            return squawk;
+
+            return Result<Squawk>.Success(squawk.Entity);
         }
     }
 }

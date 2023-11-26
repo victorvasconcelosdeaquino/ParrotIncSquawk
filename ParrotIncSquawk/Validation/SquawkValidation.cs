@@ -1,44 +1,31 @@
 ﻿using FluentValidation;
+using ParrotIncSquawk.Constants.Errors;
 using ParrotIncSquawk.Entities;
+using ParrotIncSquawk.Models;
 using ParrotIncSquawk.Persistence;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace ParrotIncSquawk.Validation
 {
-    public class SquawkValidation : AbstractValidator<Squawk>
+    public sealed class SquawkValidation : AbstractValidator<SquawkRequest>
     {
         private readonly SquawkContext _squawkContext;
+        public static readonly string[] blacklistedWords = { "Tweet", "Twitter" };
 
-        public SquawkValidation(SquawkContext squawkContext)
+        public SquawkValidation()
         {
-            _squawkContext = squawkContext;
-
-            var blacklistedWords = new List<string> { "Tweet", "Twitter" };
-
             RuleFor(p => p.Text)
                 .MaximumLength(400)
-                .WithMessage("'{PropertyName}' should have only 400 max characters.");
+                .WithMessage(ErrorsConstants.SquawkError.LessThenOrEqual400);
             RuleFor(p => p.Text)
                 .MinimumLength(1)
-                .WithMessage("'{PropertyName}' must be at least 1 character.");
-
-            RuleFor(p => p)
-                .Must(p => !IsDuplicate(p))
-                .WithMessage("'{PropertyName}' cannot be duplicated.");
+                .WithMessage(ErrorsConstants.SquawkError.AtLeastOne);
 
             RuleFor(p => p.Text)
                 .Must(pass => !blacklistedWords
                 .Any(word => pass.IndexOf(word, StringComparison.OrdinalIgnoreCase) >= 0))
-                .WithMessage("'{PropertyName}' contains a word that is not allowed.");
-        }
-
-        private bool IsDuplicate(Squawk squawk)
-        {
-            return _squawkContext.Squawks
-                .Any(x => x.Text == squawk.Text &&
-                x.UserId == squawk.UserId);
+                .WithMessage(ErrorsConstants.SquawkError.BlackList);
         }
     }
 }

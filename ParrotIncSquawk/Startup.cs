@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using ParrotIncSquawk.Extensions;
 using ParrotIncSquawk.Persistence;
 using ParrotIncSquawk.Services;
 
@@ -33,6 +34,7 @@ namespace ParrotIncSquawk
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Squawk API", Version = "v1" });
             });
 
+            services.AddMemoryCache();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,6 +48,9 @@ namespace ParrotIncSquawk
             }
 
             app.UseHttpsRedirection();
+
+            //prevents the user post 2 or more times in a interval of 20 seconds
+            app.UseRateLimit();
 
             app.UseRouting();
 
