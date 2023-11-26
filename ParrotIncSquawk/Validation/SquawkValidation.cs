@@ -9,7 +9,6 @@ namespace ParrotIncSquawk.Validation
 {
     public sealed class SquawkValidation : AbstractValidator<SquawkRequest>
     {
-        private readonly SquawkContext _squawkContext;
         public static readonly string[] blacklistedWords = { "Tweet", "Twitter" };
 
         /// <summary>
